@@ -10,7 +10,7 @@ import Toolbar from './Toolbar.tsx'
 
 const useStyles = makeStyles()(() => ({
     editorContainer: {
-        height: '100%',
+        height: '70%',
         textAlign: 'left',
     },
     contentEditableRoot: {
@@ -20,6 +20,8 @@ const useStyles = makeStyles()(() => ({
         padding: '24px',
         border: '1px solid #fff',
         borderRadius: '4px',
+        backgroundColor: 'white',
+        color: '#000',
     },
 }))
 

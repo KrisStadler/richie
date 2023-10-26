@@ -1,6 +1,5 @@
 import React from 'react'
-import { MenuItem } from '@mui/material'
-import Menu from '@mui/material/Menu'
+import {FormControl, InputLabel, MenuItem, Select} from '@mui/material'
 import Popover from '@mui/material/Popover'
 import { Box } from '@mui/system'
 import { makeStyles } from 'tss-react/mui'
@@ -12,6 +11,9 @@ const useStyles = makeStyles()(() => ({
         textAlign: 'left',
         padding: '16px 24px',
         borderTop: `1px solid #2F323720`,
+        backgroundColor: '#fff',
+        width: '100%',
+        color: '#000',
     },
     ghostButton: {
         cursor: 'pointer',
@@ -42,9 +44,12 @@ const Toolbar = () => {
     return (
         <>
             <Box className={classes.toolbarContainer}>
-                <Box className={classes.ghostButton} onClick={handleClick}>
+                <Box className={classes.ghostButton} onClick={(e) => {
+                    e.preventDefault()
+                    handleClick(e)
+                }}>
                     <Typography  fontWeight={500}>
-                        Text formatting
+                        Aa
                     </Typography>
                 </Box>
             </Box>
@@ -62,8 +67,10 @@ const Toolbar = () => {
                     horizontal: 'center',
                 }}
             >
-                <Box>
-                    <HeadingsDropdown />
+                <Box sx={{ width: '800px'}}>
+                    <Box sx={{width: '100px', padding: 2, borderRight: '1px solid red'}}>
+                        <HeadingsDropdown />
+                    </Box>
                 </Box>
             </Popover>
         </>
@@ -73,44 +80,24 @@ const Toolbar = () => {
 export default Toolbar
 
 const HeadingsDropdown = () => {
-    const { classes } = useStyles()
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLDivElement>(null)
-    const open = Boolean(anchorEl)
-    const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        setAnchorEl(event.currentTarget)
-    }
-    const handleClose = () => {
-        setAnchorEl(null)
-    }
-
     return (
-        <>
-            <Box className={classes.ghostButton} onClick={handleClick}>
-                <Typography color="onSurface.medium" fontWeight={500}>
-                    Text formatting
-                </Typography>
-            </Box>
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                }}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                transformOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                }}
-            >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
-            </Menu>
-        </>
+            <FormControl fullWidth size={'small'}>
+                <InputLabel id="demo-simple-select-label">Text Format</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={''}
+                    label="Text Format"
+                    // onChange={handleChange}
+                >
+                    <MenuItem value={10}>Normal</MenuItem>
+                    <MenuItem value={20}>Heading 1</MenuItem>
+                    <MenuItem value={30}>Heading 2</MenuItem>
+                    <MenuItem value={30}>Heading 3</MenuItem>
+                    <MenuItem value={30}>Bullet list</MenuItem>
+                    <MenuItem value={30}>Numbered list</MenuItem>
+                </Select>
+            </FormControl>
+
     )
 }
