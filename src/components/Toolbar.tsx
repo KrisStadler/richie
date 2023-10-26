@@ -1,5 +1,5 @@
 import React from 'react'
-import {FormControl, InputLabel, MenuItem, Select} from '@mui/material'
+import {Button, FormControl, InputLabel, MenuItem, Select} from '@mui/material'
 import Popover from '@mui/material/Popover'
 import { Box } from '@mui/system'
 import { makeStyles } from 'tss-react/mui'
@@ -28,9 +28,9 @@ const useStyles = makeStyles()(() => ({
 
 const Toolbar = () => {
     const { classes } = useStyles()
-    const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null)
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
 
-    const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget)
     }
 
@@ -44,14 +44,11 @@ const Toolbar = () => {
     return (
         <>
             <Box className={classes.toolbarContainer}>
-                <Box className={classes.ghostButton} onClick={(e) => {
-                    e.preventDefault()
-                    handleClick(e)
-                }}>
+                <Button className={classes.ghostButton} onClick={handleClick}>
                     <Typography  fontWeight={500}>
                         Aa
                     </Typography>
-                </Box>
+                </Button>
             </Box>
             <Popover
                 id={id}
