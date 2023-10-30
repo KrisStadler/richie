@@ -11,7 +11,7 @@ function App() {
             alignItems: 'center',
             height: '100vh'
       }}>
-          {/*Editor contianer ie: some external component that would contain the editor*/}
+          {/*Editor container ie: some external component that would contain the editor*/}
           <Box sx={{
               width: '800px',
               height: '700px',

@@ -7,10 +7,21 @@ import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
-import {$getSelection, $isRangeSelection, COMMAND_PRIORITY_CRITICAL, SELECTION_CHANGE_COMMAND} from "lexical";
+import {
+    $getSelection,
+    $isRangeSelection,
+    COMMAND_PRIORITY_CRITICAL,
+    FORMAT_ELEMENT_COMMAND,
+    SELECTION_CHANGE_COMMAND
+} from "lexical";
 import {TextFormatType} from "lexical/nodes/LexicalTextNode";
 import React, {useCallback, useEffect, useState} from "react";
+import {ElementFormatType} from "lexical/nodes/LexicalElementNode";
 
 const useStyles = makeStyles()(() => ({
     toolbarContainer: {
@@ -63,7 +74,7 @@ const Toolbar = () => {
     // Register a listener for selection changes. This listener callback will intercept the selection change before the default handler
     // for the eventand trigger the $updateToolbar function.
     useEffect(() => {
-        return editor.registerCommand(
+        editor.registerCommand(
             SELECTION_CHANGE_COMMAND,
             (_payload) => {
                 $updateToolbar();
@@ -72,6 +83,12 @@ const Toolbar = () => {
             },
             COMMAND_PRIORITY_CRITICAL,
         );
+
+        editor.registerUpdateListener(({editorState}) => {
+            editorState.read(() => {
+                $updateToolbar();
+            });
+        })
     }, [editor, $updateToolbar]);
 
     return (
@@ -84,7 +101,7 @@ const Toolbar = () => {
                 <FontFamily />
                 <FontSize />
                 <TextAlignment />
-                <TextFormatting isBold={isBold} />
+                <TextFormatting isBold={isBold} isItalic={isItalic} isUnderline={isUnderline} />
                 {/*<Button className={classes.ghostButton} onClick={handleClick}>*/}
                 {/*    <Typography  fontWeight={500}>*/}
                 {/*        Aa*/}
@@ -167,31 +184,42 @@ const FontSize = () => {
 }
 
 const TextAlignment = () => {
-    return (
-        <FormControl fullWidth size={'small'}>
-            <InputLabel id="text-alignment-select-label">Text Alignment</InputLabel>
-            <Select
-                labelId="text-alignment-select-label"
-                id="text-alignment-select"
-                value={''}
-                label="Text Alignment"
-                // onChange={handleChange}
-            >
-                <MenuItem value={10}>Normal</MenuItem>
-                <MenuItem value={20}>Heading 1</MenuItem>
-                <MenuItem value={30}>Heading 2</MenuItem>
-                <MenuItem value={30}>Heading 3</MenuItem>
-                <MenuItem value={30}>Bullet list</MenuItem>
-                <MenuItem value={30}>Numbered list</MenuItem>
-            </Select>
-        </FormControl>
+    const [editor] = useLexicalComposerContext();
+    const [alignment, setAlignment] = useState<ElementFormatType>('');
+    const updateEditorTextFormat = (format: ElementFormatType) => {
+        editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, format);
+    };
+    const handleAlignment = (_: React.MouseEvent, newFormat: ElementFormatType) => {
+        setAlignment(newFormat)
+        updateEditorTextFormat(newFormat);
+    };
 
-    )
+    return (
+        <ToggleButtonGroup
+            value={alignment}
+            exclusive
+            onChange={handleAlignment}
+            aria-label="text alignment"
+        >
+            <ToggleButton value="left" aria-label="left aligned">
+                <FormatAlignLeftIcon />
+            </ToggleButton>
+            <ToggleButton value="center" aria-label="centered">
+                <FormatAlignCenterIcon />
+            </ToggleButton>
+            <ToggleButton value="right" aria-label="right aligned">
+                <FormatAlignRightIcon />
+            </ToggleButton>
+            <ToggleButton value="justify" aria-label="justified">
+                <FormatAlignJustifyIcon />
+            </ToggleButton>
+        </ToggleButtonGroup>
+    );
 }
 
-const TextFormatting = ({isBold}: {isBold: boolean}) => {
+const TextFormatting = ({isBold, isItalic, isUnderline}: {isBold: boolean; isItalic: boolean; isUnderline: boolean;}) => {
     const [editor] = useLexicalComposerContext();
-    const [formats, setFormats] = useState(['']);
+    const [formats, setFormats] = useState<Array<TextFormatType>>([]);
 
     useEffect(() => {
         if (isBold && !formats.includes('bold')) {
@@ -201,6 +229,22 @@ const TextFormatting = ({isBold}: {isBold: boolean}) => {
         }
     }, [isBold, formats])
 
+    useEffect(() => {
+        if (isItalic && !formats.includes('italic')) {
+            setFormats([...formats,'italic']);
+        } else if (!isItalic && formats.includes('italic')) {
+            setFormats(formats.filter((value) => value !== 'italic'));
+        }
+    }, [isItalic, formats])
+
+    useEffect(() => {
+        if (isUnderline && !formats.includes('underline')) {
+            setFormats([...formats,'underline']);
+        } else if (!isUnderline && formats.includes('underline')) {
+            setFormats(formats.filter((value) => value !== 'underline'));
+        }
+    }, [isUnderline, formats])
+
     const updateEditorTextFormat = (format: TextFormatType) => {
         editor.update(() => {
             const selection = $getSelection();
@@ -209,16 +253,15 @@ const TextFormatting = ({isBold}: {isBold: boolean}) => {
             }
         });
     };
-    const handleFormat = (_: React.MouseEvent, newFormats: Array<string>) => {
+    const handleFormat = (_: React.MouseEvent, newFormats: Array<TextFormatType>) => {
         if (newFormats.length < formats.length) {
             const format = formats.filter((value) => !newFormats.includes(value))[0];
             updateEditorTextFormat(format as TextFormatType);
         } else {
             const format = newFormats.filter((value) => !formats.includes(value))[0];
+            console.log(format)
             updateEditorTextFormat(format as TextFormatType);
         }
-
-        // setFormats(newFormats);
     };
 
     return (
@@ -233,10 +276,10 @@ const TextFormatting = ({isBold}: {isBold: boolean}) => {
             <ToggleButton value="italic" aria-label="italic">
                 <FormatItalicIcon />
             </ToggleButton>
-            <ToggleButton value="underlined" aria-label="underlined">
+            <ToggleButton value="underline" aria-label="underline">
                 <FormatUnderlinedIcon />
             </ToggleButton>
-            <ToggleButton value="color" aria-label="color" disabled>
+            <ToggleButton value="color" aria-label="color">
                 <FormatColorFillIcon />
                 <ArrowDropDownIcon />
             </ToggleButton>

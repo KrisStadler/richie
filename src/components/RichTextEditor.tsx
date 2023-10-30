@@ -23,6 +23,12 @@ const useStyles = makeStyles()(() => ({
         backgroundColor: 'white',
         color: '#000',
     },
+    editorItalic: {
+        fontStyle: 'italic',
+    },
+    editorUnderline: {
+        textDecoration: 'underline',
+    },
 }))
 
 const RichTextEditor = () => {
@@ -35,6 +41,12 @@ const RichTextEditor = () => {
     const initialConfig = {
         namespace: 'EmailRichTextEditor',
         onError,
+        theme: {
+            text: {
+                italic: classes.editorItalic,
+                underline: classes.editorUnderline,
+            }
+        }
     }
 
     return (
