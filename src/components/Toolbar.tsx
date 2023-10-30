@@ -1,4 +1,13 @@
-import {IconButton, FormControl, InputLabel, MenuItem, Select, ToggleButtonGroup, ToggleButton} from '@mui/material'
+import {
+    IconButton,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    ToggleButtonGroup,
+    ToggleButton,
+    SelectChangeEvent
+} from '@mui/material'
 import { Box } from '@mui/system'
 import { makeStyles } from 'tss-react/mui'
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
@@ -12,6 +21,10 @@ import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
+import {
+    $patchStyleText,
+    $getSelectionStyleValueForProperty
+} from '@lexical/selection';
 import {
     $getSelection,
     $isRangeSelection,
@@ -52,6 +65,7 @@ const Toolbar = () => {
     const [isBold, setIsBold] = useState(false);
     const [isItalic, setIsItalic] = useState(false);
     const [isUnderline, setIsUnderline] = useState(false);
+    const [fontSizeApplied, setFontSizeApplied] = useState('');
 
 
     /**
@@ -64,6 +78,10 @@ const Toolbar = () => {
             setIsBold(selection.hasFormat('bold'));
             setIsItalic(selection.hasFormat('italic'));
             setIsUnderline(selection.hasFormat('underline'));
+
+            setFontSizeApplied(
+                $getSelectionStyleValueForProperty(selection, 'font-size', '15px'),
+            );
         }
     }, [editor]);
 
@@ -99,7 +117,7 @@ const Toolbar = () => {
                 </IconButton>
                 <HeadingsDropdown />
                 <FontFamily />
-                <FontSize />
+                <FontSize fontSizeApplied={fontSizeApplied}/>
                 <TextAlignment />
                 <TextFormatting isBold={isBold} isItalic={isItalic} isUnderline={isUnderline} />
                 {/*<Button className={classes.ghostButton} onClick={handleClick}>*/}
@@ -160,23 +178,43 @@ const FontFamily = () => {
     )
 }
 
-const FontSize = () => {
+const FontSize = ({fontSizeApplied}: {fontSizeApplied: string}) => {
+    const [editor] = useLexicalComposerContext();
+
+    const handleFontSizeUpdate = (event: SelectChangeEvent) => {
+        const fontSize = event.target.value;
+        editor.update(() => {
+            const selection = $getSelection();
+            if ($isRangeSelection(selection)) {
+                $patchStyleText(selection, {
+                    ['font-size']: fontSize,
+                });
+            }
+
+        })
+    }
+
     return (
         <FormControl fullWidth size={'small'}>
             <InputLabel id="font-size-select-label">Font size</InputLabel>
             <Select
                 labelId="font-size-select-label"
                 id="font-size-select"
-                value={''}
+                value={fontSizeApplied}
                 label="Text Format"
-                // onChange={handleChange}
+                onChange={handleFontSizeUpdate}
             >
-                <MenuItem value={10}>Normal</MenuItem>
-                <MenuItem value={20}>Heading 1</MenuItem>
-                <MenuItem value={30}>Heading 2</MenuItem>
-                <MenuItem value={30}>Heading 3</MenuItem>
-                <MenuItem value={30}>Bullet list</MenuItem>
-                <MenuItem value={30}>Numbered list</MenuItem>
+                <MenuItem value={'10px'}>10px</MenuItem>
+                <MenuItem value={'11px'}>11px</MenuItem>
+                <MenuItem value={'12px'}>12px</MenuItem>
+                <MenuItem value={'13px'}>13px</MenuItem>
+                <MenuItem value={'14px'}>14px</MenuItem>
+                <MenuItem value={'15px'}>15px</MenuItem>
+                <MenuItem value={'16px'}>16px</MenuItem>
+                <MenuItem value={'17px'}>17px</MenuItem>
+                <MenuItem value={'18px'}>18px</MenuItem>
+                <MenuItem value={'19px'}>19px</MenuItem>
+                <MenuItem value={'20px'}>20px</MenuItem>
             </Select>
         </FormControl>
 
@@ -259,7 +297,6 @@ const TextFormatting = ({isBold, isItalic, isUnderline}: {isBold: boolean; isIta
             updateEditorTextFormat(format as TextFormatType);
         } else {
             const format = newFormats.filter((value) => !formats.includes(value))[0];
-            console.log(format)
             updateEditorTextFormat(format as TextFormatType);
         }
     };
