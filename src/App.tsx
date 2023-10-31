@@ -5,7 +5,7 @@ function App() {
 
 
   return (
-      <Container maxWidth="md" sx={{
+      <Container maxWidth="lg" sx={{
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
@@ -16,6 +16,7 @@ function App() {
           <Box sx={{
               border: `1px solid #2F323720`,
                 borderRadius: '4px',
+              width: '100%',
           }}>
               <RichTextEditor />
           </Box>
