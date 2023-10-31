@@ -51,6 +51,7 @@ const Toolbar = () => {
     const [isItalic, setIsItalic] = useState(false);
     const [isUnderline, setIsUnderline] = useState(false);
     const [fontSizeApplied, setFontSizeApplied] = useState('');
+    const [fontFamilyApplied, setFontFamilyApplied] = useState('');
 
 
     /**
@@ -66,6 +67,9 @@ const Toolbar = () => {
 
             setFontSizeApplied(
                 $getSelectionStyleValueForProperty(selection, 'font-size', '15px'),
+            );
+            setFontFamilyApplied(
+                $getSelectionStyleValueForProperty(selection, 'font-family', 'Arial'),
             );
         }
     }, [editor]);
@@ -100,7 +104,7 @@ const Toolbar = () => {
                     <ArrowBackIcon />
                 </IconButton>
                 <HeadingsDropdown />
-                <FontFamily />
+                <FontFamily fontFamilyApplied={fontFamilyApplied}/>
                 <FontSize fontSizeApplied={fontSizeApplied}/>
                 <TextAlignment />
                 <BlockFormatting isBold={isBold} isItalic={isItalic} isUnderline={isUnderline} />

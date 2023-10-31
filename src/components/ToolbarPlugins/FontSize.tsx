@@ -5,7 +5,10 @@ import {
     $patchStyleText,
 } from '@lexical/selection';
 
-const FontSize = ({fontSizeApplied}: {fontSizeApplied: string}) => {
+interface Props {
+    fontSizeApplied: string
+}
+const FontSize = ({fontSizeApplied}: Props) => {
     const [editor] = useLexicalComposerContext();
 
     const handleFontSizeUpdate = (event: SelectChangeEvent) => {
