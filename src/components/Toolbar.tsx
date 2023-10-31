@@ -1,126 +1,176 @@
+import { IconButton } from "@mui/material";
+import { Box } from "@mui/system";
+import { makeStyles } from "tss-react/mui";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { $getSelectionStyleValueForProperty } from "@lexical/selection";
 import {
-    IconButton,
-} from '@mui/material'
-import { Box } from '@mui/system'
-import { makeStyles } from 'tss-react/mui'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
-import {
-    $getSelectionStyleValueForProperty
-} from '@lexical/selection';
-import {
-    $getSelection,
-    $isRangeSelection,
-    COMMAND_PRIORITY_CRITICAL,
-    SELECTION_CHANGE_COMMAND
+  $getSelection,
+  $isRangeSelection,
+  $isRootOrShadowRoot,
+  COMMAND_PRIORITY_CRITICAL,
+  SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import {useCallback, useEffect, useState} from "react";
+import { $isListNode, ListNode } from "@lexical/list";
+import { useCallback, useEffect, useState } from "react";
 import BlockFormatting from "./ToolbarPlugins/BlockFormatting.tsx";
 import TextAlignment from "./ToolbarPlugins/TextAlignment.tsx";
 import FontSize from "./ToolbarPlugins/FontSize.tsx";
 import FontFamily from "./ToolbarPlugins/FontFamily.tsx";
 import HeadingsDropdown from "./ToolbarPlugins/HeadingsDropdown.tsx";
+import { $findMatchingParent, $getNearestNodeOfType } from "@lexical/utils";
+import { $isHeadingNode } from "@lexical/rich-text";
 
 const useStyles = makeStyles()(() => ({
-    toolbarContainer: {
-        textAlign: 'left',
-        padding: '16px 24px',
-        borderTop: `1px solid #2F323720`,
-        backgroundColor: '#fff',
-        color: '#000',
-        display: 'flex',
-        justifyContent: 'space-between',
+  toolbarContainer: {
+    textAlign: "left",
+    padding: "16px 24px",
+    borderTop: `1px solid #2F323720`,
+    backgroundColor: "#fff",
+    color: "#000",
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  ghostButton: {
+    cursor: "pointer",
+    padding: "8px 16px",
+    borderRadius: "4px",
+    width: "fit-content",
+    "&:hover": {
+      backgroundColor: "#2F323720",
     },
-    ghostButton: {
-        cursor: 'pointer',
-        padding: '8px 16px',
-        borderRadius: '4px',
-        width: 'fit-content',
-        '&:hover': {
-            backgroundColor: '#2F323720',
-        },
-    },
-}))
+  },
+}));
+
+const blockTypeToBlockName = {
+  bullet: "Bulleted List",
+  check: "Check List",
+  code: "Code Block",
+  h1: "Heading 1",
+  h2: "Heading 2",
+  h3: "Heading 3",
+  h4: "Heading 4",
+  h5: "Heading 5",
+  h6: "Heading 6",
+  number: "Numbered List",
+  paragraph: "Normal",
+  quote: "Quote",
+};
 
 const Toolbar = () => {
-    const [editor] = useLexicalComposerContext();
-    const { classes } = useStyles()
+  const [editor] = useLexicalComposerContext();
+  const { classes } = useStyles();
 
-    const [isBold, setIsBold] = useState(false);
-    const [isItalic, setIsItalic] = useState(false);
-    const [isUnderline, setIsUnderline] = useState(false);
-    const [fontSizeApplied, setFontSizeApplied] = useState('');
-    const [fontFamilyApplied, setFontFamilyApplied] = useState('');
+  const [isBold, setIsBold] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
+  const [isUnderline, setIsUnderline] = useState(false);
+  const [fontSizeApplied, setFontSizeApplied] = useState("");
+  const [fontFamilyApplied, setFontFamilyApplied] = useState("");
+  const [blockType, setBlockType] =
+    useState<keyof typeof blockTypeToBlockName>("paragraph");
 
-
-    /**
-     * This function is in charge of syncing the UI of the toolbar to match what's in the editor.
-     * ie: if a selection as bold state applied the bold button on the toolbar should indicate that.
-     * */
-    const $updateToolbar = useCallback(() => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-            setIsBold(selection.hasFormat('bold'));
-            setIsItalic(selection.hasFormat('italic'));
-            setIsUnderline(selection.hasFormat('underline'));
-
-            setFontSizeApplied(
-                $getSelectionStyleValueForProperty(selection, 'font-size', '15px'),
-            );
-            setFontFamilyApplied(
-                $getSelectionStyleValueForProperty(selection, 'font-family', 'Arial'),
-            );
-        }
-    }, [editor]);
-
-    useEffect(() => {
-
-    },[])
-
-    // Register a listener for selection changes. This listener callback will intercept the selection change before the default handler
-    // for the event and trigger the $updateToolbar function.
-    useEffect(() => {
-        editor.registerCommand(
-            SELECTION_CHANGE_COMMAND,
-            (_payload) => {
-                $updateToolbar();
-                return false;
-            },
-            COMMAND_PRIORITY_CRITICAL,
-        );
-
-        editor.registerUpdateListener(({editorState}) => {
-            editorState.read(() => {
-                $updateToolbar();
+  /**
+   * This function is in charge of syncing the UI of the toolbar to match what's in the editor.
+   * ie: if a selection as bold state applied the bold button on the toolbar should indicate that.
+   * */
+  const $updateToolbar = useCallback(() => {
+    const selection = $getSelection();
+    if ($isRangeSelection(selection)) {
+      const anchorNode = selection.anchor.getNode();
+      let element =
+        anchorNode.getKey() === "root"
+          ? anchorNode
+          : $findMatchingParent(anchorNode, (e) => {
+              const parent = e.getParent();
+              return parent !== null && $isRootOrShadowRoot(parent);
             });
-        })
-    }, [editor, $updateToolbar]);
 
-    return (
-        <>
-            <Box className={classes.toolbarContainer}>
-                <IconButton aria-label="back">
-                    <ArrowBackIcon />
-                </IconButton>
-                <HeadingsDropdown />
-                <FontFamily fontFamilyApplied={fontFamilyApplied}/>
-                <FontSize fontSizeApplied={fontSizeApplied}/>
-                <TextAlignment />
-                <BlockFormatting isBold={isBold} isItalic={isItalic} isUnderline={isUnderline} />
-                {/*<Button className={classes.ghostButton} onClick={handleClick}>*/}
-                {/*    <Typography  fontWeight={500}>*/}
-                {/*        Aa*/}
-                {/*    </Typography>*/}
-                {/*</Button>*/}
-            </Box>
-        </>
-    )
-}
+      if (element === null) {
+        element = anchorNode.getTopLevelElementOrThrow();
+      }
 
-export default Toolbar
+      const elementKey = element.getKey();
+      const elementDOM = editor.getElementByKey(elementKey);
 
+      // console.log({ element, elementKey, elementDOM, anchorNode, selection });
 
+      setIsBold(selection.hasFormat("bold"));
+      setIsItalic(selection.hasFormat("italic"));
+      setIsUnderline(selection.hasFormat("underline"));
 
+      setFontSizeApplied(
+        $getSelectionStyleValueForProperty(selection, "font-size", "15px"),
+      );
+      setFontFamilyApplied(
+        $getSelectionStyleValueForProperty(selection, "font-family", "Arial"),
+      );
 
+      if (elementDOM !== null) {
+        if ($isListNode(element)) {
+          const parentList = $getNearestNodeOfType<ListNode>(
+            anchorNode,
+            ListNode,
+          );
+          const type = parentList
+            ? parentList.getListType()
+            : element.getListType();
+          setBlockType(type);
+        } else {
+          const type = $isHeadingNode(element)
+            ? element.getTag()
+            : element.getType();
+          if (type in blockTypeToBlockName) {
+            setBlockType(type as keyof typeof blockTypeToBlockName);
+          }
+        }
+      }
+    }
+  }, [editor]);
 
+  useEffect(() => {}, []);
 
+  // Register a listener for selection changes. This listener callback will intercept the selection change before the default handler
+  // for the event and trigger the $updateToolbar function.
+  useEffect(() => {
+    editor.registerCommand(
+      SELECTION_CHANGE_COMMAND,
+      (_payload) => {
+        $updateToolbar();
+        return false;
+      },
+      COMMAND_PRIORITY_CRITICAL,
+    );
+
+    editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        $updateToolbar();
+      });
+    });
+  }, [editor, $updateToolbar]);
+
+  return (
+    <>
+      <Box className={classes.toolbarContainer}>
+        <IconButton aria-label="back">
+          <ArrowBackIcon />
+        </IconButton>
+        <HeadingsDropdown blockType={blockType} />
+        <FontFamily fontFamilyApplied={fontFamilyApplied} />
+        <FontSize fontSizeApplied={fontSizeApplied} />
+        <TextAlignment />
+        <BlockFormatting
+          isBold={isBold}
+          isItalic={isItalic}
+          isUnderline={isUnderline}
+        />
+        {/*<Button className={classes.ghostButton} onClick={handleClick}>*/}
+        {/*    <Typography  fontWeight={500}>*/}
+        {/*        Aa*/}
+        {/*    </Typography>*/}
+        {/*</Button>*/}
+      </Box>
+    </>
+  );
+};
+
+export default Toolbar;

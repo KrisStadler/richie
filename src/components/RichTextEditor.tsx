@@ -2,6 +2,7 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { HeadingNode } from "@lexical/rich-text";
 import { Box } from "@mui/system";
@@ -63,6 +64,7 @@ const RichTextEditor = () => {
           ErrorBoundary={LexicalErrorBoundary}
         />
         <HistoryPlugin />
+        <ListPlugin />
       </Box>
       <Toolbar />
       <TreeViewPlugin />
