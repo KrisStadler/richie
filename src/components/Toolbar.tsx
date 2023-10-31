@@ -27,7 +27,6 @@ const useStyles = makeStyles()(() => ({
         padding: '16px 24px',
         borderTop: `1px solid #2F323720`,
         backgroundColor: '#fff',
-        width: '100%',
         color: '#000',
         display: 'flex',
         justifyContent: 'space-between',

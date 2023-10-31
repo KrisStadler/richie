@@ -7,16 +7,16 @@ import { makeStyles } from 'tss-react/mui'
 
 import EditorContentEditable from './ContentEditable.tsx'
 import Toolbar from './Toolbar.tsx'
+import TreeViewPlugin from "./TreeViewPlugin.tsx";
 
 const useStyles = makeStyles()(() => ({
     editorContainer: {
-        height: '70%',
         textAlign: 'left',
     },
     contentEditableRoot: {
         outline: 'none',
-        width: '100%',
-        height: '90%',
+        height: '100%',
+        minHeight: '200px',
         padding: '24px',
         border: '1px solid #fff',
         borderRadius: '4px',
@@ -62,6 +62,7 @@ const RichTextEditor = () => {
                 <HistoryPlugin />
             </Box>
             <Toolbar />
+            <TreeViewPlugin/>
         </LexicalComposer>
     )
 }
