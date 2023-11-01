@@ -38,7 +38,6 @@ interface Props {
   blockType: keyof typeof blockTypeToBlockName;
 }
 const HeadingsDropdown = ({ blockType }: Props) => {
-  console.log({ blockType });
   const [editor] = useLexicalComposerContext();
   const formatParagraph = () => {
     editor.update(() => {
@@ -67,7 +66,6 @@ const HeadingsDropdown = ({ blockType }: Props) => {
   };
 
   const formatBulletList = () => {
-    console.log("we are here");
     editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
     if (blockType !== "bullet") {
       editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
