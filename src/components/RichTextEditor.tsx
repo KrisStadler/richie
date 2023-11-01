@@ -19,7 +19,7 @@ const useStyles = makeStyles()(() => ({
   contentEditableRoot: {
     outline: "none",
     height: "100%",
-    minHeight: "200px",
+    minHeight: "300px",
     padding: "24px",
     border: "1px solid #fff",
     borderRadius: "4px",

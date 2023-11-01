@@ -1,7 +1,7 @@
 import { IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 import { makeStyles } from "tss-react/mui";
-// import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import TextFormatIcon from "@mui/icons-material/TextFormat";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $getSelectionStyleValueForProperty } from "@lexical/selection";
@@ -22,6 +22,7 @@ import HeadingsDropdown from "./ToolbarPlugins/HeadingsDropdown.tsx";
 import { $findMatchingParent, $getNearestNodeOfType } from "@lexical/utils";
 import { $isHeadingNode } from "@lexical/rich-text";
 import { useSpring, animated } from "@react-spring/web";
+import Tooltip from "@mui/material/Tooltip";
 
 const useStyles = makeStyles()(() => ({
   toolbarContainer: {
@@ -150,13 +151,15 @@ const Toolbar = () => {
 
   return (
     <>
-      {/*<IconButton aria-label="back" sx={{ marginRight: "10px" }}>*/}
-      {/*  <ArrowBackIcon />*/}
-      {/*</IconButton>*/}
       <Box className={classes.toolbarContainer}>
-        <IconButton sx={{ marginRight: "10px" }} onClick={() => toggle(!open)}>
-          <TextFormatIcon />
-        </IconButton>
+        <Tooltip title={"Format Text"} placement={"top"}>
+          <IconButton
+            sx={{ marginRight: "10px" }}
+            onClick={() => toggle(!open)}
+          >
+            <TextFormatIcon />
+          </IconButton>
+        </Tooltip>
         <animated.div className={classes.animatedContainer} style={props}>
           <HeadingsDropdown blockType={blockType} />
           <FontFamily fontFamilyApplied={fontFamilyApplied} />
@@ -168,6 +171,11 @@ const Toolbar = () => {
             isUnderline={isUnderline}
           />
         </animated.div>
+        <Tooltip title={"Attach File"} placement={"top"}>
+          <IconButton sx={{ marginLeft: "10px" }}>
+            <AttachFileIcon />
+          </IconButton>
+        </Tooltip>
       </Box>
     </>
   );
