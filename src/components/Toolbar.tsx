@@ -1,7 +1,8 @@
 import { IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 import { makeStyles } from "tss-react/mui";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+// import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import TextFormatIcon from "@mui/icons-material/TextFormat";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $getSelectionStyleValueForProperty } from "@lexical/selection";
 import {
@@ -20,25 +21,22 @@ import FontFamily from "./ToolbarPlugins/FontFamily.tsx";
 import HeadingsDropdown from "./ToolbarPlugins/HeadingsDropdown.tsx";
 import { $findMatchingParent, $getNearestNodeOfType } from "@lexical/utils";
 import { $isHeadingNode } from "@lexical/rich-text";
+import { useSpring, animated } from "@react-spring/web";
 
 const useStyles = makeStyles()(() => ({
   toolbarContainer: {
     textAlign: "left",
-    padding: "16px 24px",
+    padding: "10px 24px",
     borderTop: `1px solid #2F323720`,
     backgroundColor: "#fff",
     color: "#000",
     display: "flex",
-    justifyContent: "flex-start",
   },
-  ghostButton: {
-    cursor: "pointer",
-    padding: "8px 16px",
-    borderRadius: "4px",
-    width: "fit-content",
-    "&:hover": {
-      backgroundColor: "#2F323720",
-    },
+  animatedContainer: {
+    display: "flex",
+    justifyContent: "flex-start",
+    overflow: "hidden",
+    padding: "6px 0px",
   },
 }));
 
@@ -68,6 +66,8 @@ const Toolbar = () => {
   const [fontFamilyApplied, setFontFamilyApplied] = useState("");
   const [blockType, setBlockType] =
     useState<keyof typeof blockTypeToBlockName>("paragraph");
+  const [open, toggle] = useState(false);
+  const props = useSpring({ width: open ? "580px" : "0px" });
 
   /**
    * This function is in charge of syncing the UI of the toolbar to match what's in the editor.
@@ -150,24 +150,24 @@ const Toolbar = () => {
 
   return (
     <>
+      {/*<IconButton aria-label="back" sx={{ marginRight: "10px" }}>*/}
+      {/*  <ArrowBackIcon />*/}
+      {/*</IconButton>*/}
       <Box className={classes.toolbarContainer}>
-        <IconButton aria-label="back" sx={{ marginRight: "10px" }}>
-          <ArrowBackIcon />
+        <IconButton sx={{ marginRight: "10px" }} onClick={() => toggle(!open)}>
+          <TextFormatIcon />
         </IconButton>
-        <HeadingsDropdown blockType={blockType} />
-        <FontFamily fontFamilyApplied={fontFamilyApplied} />
-        <FontSize fontSizeApplied={fontSizeApplied} />
-        <TextAlignment />
-        <BlockFormatting
-          isBold={isBold}
-          isItalic={isItalic}
-          isUnderline={isUnderline}
-        />
-        {/*<Button className={classes.ghostButton} onClick={handleClick}>*/}
-        {/*    <Typography  fontWeight={500}>*/}
-        {/*        Aa*/}
-        {/*    </Typography>*/}
-        {/*</Button>*/}
+        <animated.div className={classes.animatedContainer} style={props}>
+          <HeadingsDropdown blockType={blockType} />
+          <FontFamily fontFamilyApplied={fontFamilyApplied} />
+          <FontSize fontSizeApplied={fontSizeApplied} />
+          <TextAlignment />
+          <BlockFormatting
+            isBold={isBold}
+            isItalic={isItalic}
+            isUnderline={isUnderline}
+          />
+        </animated.div>
       </Box>
     </>
   );
