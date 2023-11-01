@@ -19,6 +19,7 @@ import {
   INSERT_UNORDERED_LIST_COMMAND,
   REMOVE_LIST_COMMAND,
 } from "@lexical/list";
+import { Box } from "@mui/system";
 
 const blockTypeToBlockName = {
   bullet: "Bulleted List",
@@ -110,25 +111,33 @@ const HeadingsDropdown = ({ blockType }: Props) => {
   };
 
   return (
-    <FormControl fullWidth size={"small"}>
-      <InputLabel id="demo-simple-select-label" size={"small"}>
-        Text Format
-      </InputLabel>
-      <Select
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        value={blockType}
-        label="Text Format"
-        onChange={handleChange}
-      >
-        <MenuItem value={"paragraph"}>Normal</MenuItem>
-        <MenuItem value={"h1"}>Heading 1</MenuItem>
-        <MenuItem value={"h2"}>Heading 2</MenuItem>
-        <MenuItem value={"h3"}>Heading 3</MenuItem>
-        <MenuItem value={"bullet"}>Bullet list</MenuItem>
-        <MenuItem value={"number"}>Numbered list</MenuItem>
-      </Select>
-    </FormControl>
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: "140px",
+        marginRight: "10px",
+      }}
+    >
+      <FormControl fullWidth size={"small"}>
+        <InputLabel id="demo-simple-select-label" size={"small"}>
+          Text Format
+        </InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={blockType}
+          label="Text Format"
+          onChange={handleChange}
+        >
+          <MenuItem value={"paragraph"}>Normal</MenuItem>
+          <MenuItem value={"h1"}>Heading 1</MenuItem>
+          <MenuItem value={"h2"}>Heading 2</MenuItem>
+          <MenuItem value={"h3"}>Heading 3</MenuItem>
+          <MenuItem value={"bullet"}>Bullet list</MenuItem>
+          <MenuItem value={"number"}>Numbered list</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
   );
 };
 

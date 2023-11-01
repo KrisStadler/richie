@@ -29,7 +29,7 @@ const useStyles = makeStyles()(() => ({
     backgroundColor: "#fff",
     color: "#000",
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
   },
   ghostButton: {
     cursor: "pointer",
@@ -151,7 +151,7 @@ const Toolbar = () => {
   return (
     <>
       <Box className={classes.toolbarContainer}>
-        <IconButton aria-label="back">
+        <IconButton aria-label="back" sx={{ marginRight: "10px" }}>
           <ArrowBackIcon />
         </IconButton>
         <HeadingsDropdown blockType={blockType} />

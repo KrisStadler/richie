@@ -7,6 +7,7 @@ import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
 import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
 import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
+import { Box } from "@mui/system";
 
 const TextAlignment = () => {
   const [editor] = useLexicalComposerContext();
@@ -30,7 +31,7 @@ const TextAlignment = () => {
   };
 
   return (
-    <div>
+    <Box sx={{ marginRight: "10px" }}>
       <IconButton
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
@@ -65,7 +66,7 @@ const TextAlignment = () => {
           </ListItemIcon>
         </MenuItem>
       </Menu>
-    </div>
+    </Box>
   );
 };
 
