@@ -3,6 +3,7 @@ import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { HeadingNode } from "@lexical/rich-text";
 import { Box } from "@mui/system";
@@ -11,6 +12,8 @@ import { makeStyles } from "tss-react/mui";
 import EditorContentEditable from "./ContentEditable.tsx";
 import Toolbar from "./Toolbar.tsx";
 import TreeViewPlugin from "./TreeViewPlugin.tsx";
+import { ImageNode } from "./nodes/ImageNode/ImageNode.tsx";
+import ImagesPlugin from "./ImagesPlugin.tsx";
 
 const useStyles = makeStyles()(() => ({
   editorContainer: {
@@ -32,6 +35,26 @@ const useStyles = makeStyles()(() => ({
   editorUnderline: {
     textDecoration: "underline",
   },
+  dropzone: {
+    height: "350px",
+    position: "absolute",
+    top: "9px",
+    width: "100%",
+    maxWidth: "1152px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dropzoneInnerContent: {
+    width: "97%",
+    height: "90%",
+    border: "1px dashed #000",
+    borderRadius: "4px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "#000",
+  },
 }));
 
 const RichTextEditor = () => {
@@ -50,7 +73,7 @@ const RichTextEditor = () => {
         underline: classes.editorUnderline,
       },
     },
-    nodes: [HeadingNode, ListNode, ListItemNode],
+    nodes: [HeadingNode, ListNode, ListItemNode, ImageNode],
   };
 
   return (
@@ -63,8 +86,18 @@ const RichTextEditor = () => {
           placeholder={null}
           ErrorBoundary={LexicalErrorBoundary}
         />
+        {/*<Box {...getRootProps({ className: classes.dropzone })}>*/}
+        {/*  {isFocused && (*/}
+        {/*    <Box className={classes.dropzoneInnerContent}>*/}
+        {/*      <Typography variant={"h5"}>Drop files here</Typography>*/}
+        {/*    </Box>*/}
+        {/*  )}*/}
+        {/*  <input {...getInputProps()} />*/}
+        {/*</Box>*/}
+        <ImagesPlugin />
         <HistoryPlugin />
         <ListPlugin />
+        <TabIndentationPlugin />
       </Box>
       <Toolbar />
       <TreeViewPlugin />
