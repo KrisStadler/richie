@@ -14,6 +14,7 @@ import Toolbar from "./Toolbar.tsx";
 import TreeViewPlugin from "./TreeViewPlugin.tsx";
 import { ImageNode } from "./nodes/ImageNode/ImageNode.tsx";
 import ImagesPlugin from "./ImagesPlugin.tsx";
+import DragDropPaste from "./DragDropPaste.tsx";
 
 const useStyles = makeStyles()(() => ({
   editorContainer: {
@@ -94,6 +95,7 @@ const RichTextEditor = () => {
         {/*  )}*/}
         {/*  <input {...getInputProps()} />*/}
         {/*</Box>*/}
+        <DragDropPaste />
         <ImagesPlugin />
         <HistoryPlugin />
         <ListPlugin />

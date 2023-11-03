@@ -96,6 +96,7 @@ function onDragStart(event: DragEvent): boolean {
     return false;
   }
   const dataTransfer = event.dataTransfer;
+  console.log({ node, event, dataTransfer });
   if (!dataTransfer) {
     return false;
   }
@@ -106,11 +107,9 @@ function onDragStart(event: DragEvent): boolean {
     JSON.stringify({
       data: {
         altText: node.__altText,
-        caption: node.__caption,
         height: node.__height,
         key: node.getKey(),
         maxWidth: node.__maxWidth,
-        showCaption: node.__showCaption,
         src: node.__src,
         width: node.__width,
       },

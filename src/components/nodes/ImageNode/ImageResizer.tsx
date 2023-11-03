@@ -2,6 +2,7 @@ import type { LexicalEditor } from "lexical";
 
 import * as React from "react";
 import { useRef } from "react";
+import { Box } from "@mui/system";
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -129,6 +130,8 @@ export default function ImageResizer({
     const image = imageRef.current;
     const controlWrapper = controlWrapperRef.current;
 
+    console.log({ image });
+
     if (image !== null && controlWrapper !== null) {
       event.preventDefault();
       const { width, height } = image.getBoundingClientRect();
@@ -233,7 +236,7 @@ export default function ImageResizer({
     }
   };
   return (
-    <div ref={controlWrapperRef}>
+    <Box ref={controlWrapperRef} sx={{ position: "relative" }}>
       <div
         className="image-resizer image-resizer-n"
         onPointerDown={(event) => {
@@ -282,6 +285,6 @@ export default function ImageResizer({
           handlePointerDown(event, Direction.north | Direction.west);
         }}
       />
-    </div>
+    </Box>
   );
 }
