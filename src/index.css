@@ -105,3 +105,8 @@
   left: -6px;
   cursor: nw-resize;
 }
+
+img.focused {
+  outline: 2px solid rgb(60, 132, 244);
+  user-select: none;
+}

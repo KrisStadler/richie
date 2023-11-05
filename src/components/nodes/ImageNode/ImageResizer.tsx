@@ -236,7 +236,7 @@ export default function ImageResizer({
     }
   };
   return (
-    <Box ref={controlWrapperRef} sx={{ position: "relative" }}>
+    <Box ref={controlWrapperRef}>
       <div
         className="image-resizer image-resizer-n"
         onPointerDown={(event) => {

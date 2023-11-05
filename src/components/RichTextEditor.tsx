@@ -56,6 +56,12 @@ const useStyles = makeStyles()(() => ({
     alignItems: "center",
     color: "#000",
   },
+  editorImage: {
+    cursor: "default",
+    display: "inline-block",
+    position: "relative",
+    userSelect: "none",
+  },
 }));
 
 const RichTextEditor = () => {
@@ -73,6 +79,7 @@ const RichTextEditor = () => {
         italic: classes.editorItalic,
         underline: classes.editorUnderline,
       },
+      image: classes.editorImage,
     },
     nodes: [HeadingNode, ListNode, ListItemNode, ImageNode],
   };
